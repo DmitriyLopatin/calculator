@@ -13,14 +13,38 @@ a {
 
 * {
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
+
   body {
     color: white;
     background: black;
+  }
+}
+
+section {
+  padding: 20px;
+  div {
+    min-width: 100px;
+    p,h3{
+      text-align: center;
+    }
+    border: 2px solid green;
+  }
+  h1{
+    text-align: center;
+  }
+  main{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 }
