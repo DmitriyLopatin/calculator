@@ -35,8 +35,9 @@ section {
     p,h3{
       text-align: center;
     }
-    border: 2px solid green;
+    border: 2px solid gray;
   }
+  
   h1{
     text-align: center;
   }
@@ -47,4 +48,8 @@ section {
     flex-wrap: wrap;
     gap: 10px;
   }
+}
+.priceUP{
+  border-color: green;
+  color: goldenrod;
 }
