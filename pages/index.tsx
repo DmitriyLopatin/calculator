@@ -35,7 +35,7 @@ export default function Home() {
           return [...prevState, arr]
         })
       })
-    }, 6000)
+    }, 120000)
   }, [])
 
   return (
