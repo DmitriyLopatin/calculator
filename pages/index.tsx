@@ -15,18 +15,19 @@ const getCoins = () => {
 
 export default function Home() {
   let sourc = useRef<HTMLAudioElement>(null)
-  const play = () =>{
+  const play = () => {
     sourc.current?.play()
   }
-  console.log(sourc)
+  // console.log(sourc)
   let [coins, setCoins] = useState<any[]>([]);
   const [priceUp, setPriceUp] = useState<boolean>(false)
+  const [start, setStart] = useState<boolean>(false)
 
 
   useEffect(() => {
-    
+
     setInterval(() => {
-      
+
       getCoins().then(response => {
         let arr = response.data.filter((item: { symbol: string }) => altCoins.includes(item.symbol.toLocaleLowerCase()))
           .sort((a: { symbol: string; }, b: { symbol: string; }) => a.symbol.localeCompare(b.symbol))
@@ -41,18 +42,20 @@ export default function Home() {
   return (
     <section>
       <h1>Отображено монет {coins[1] && coins[1].length}</h1>
-      <audio controls ref={sourc}><source src="/bell_ring.mp3" type="audio/mp3"/></audio>
+      <audio controls ref={sourc}><source src="/bell_ring.mp3" type="audio/mp3" /></audio>
+      <button onClick={() =>play()}>click</button>
       <main>
         {coins[1] && coins[1].map((item: { symbol: string; price: any; }, index: number) =>
-          <div key={index} className={(item.price - coins[0][index].price) / item.price * 100 > 3 ? "priceUP" : ""}>
-            <h3>{item.symbol.replace("USDT", "")}</h3>
-            <p >
-              {Number(item.price) >= 1 ? Number(item.price) <= 10 ? Number(item.price).toFixed(1) : Number(item.price).toFixed(0) : Number(item.price).toFixed(6)}
-            </p>
-           
-          </div>
+          <>
+            <div key={index} className={(item.price - coins[0][index].price) / item.price * 100 > 3 ? "priceUP" : ""}>
+              <h3>{item.symbol.replace("USDT", "")}</h3>
+              <p >
+                {Number(item.price) >= 1 ? Number(item.price) <= 10 ? Number(item.price).toFixed(1) : Number(item.price).toFixed(0) : Number(item.price).toFixed(6)}
+              </p>
+            </div>
+            {(item.price - coins[0][index].price) / item.price * 100 > 3 && play()}
+          </>
         )}
-        {}
       </main>
     </section>
   )
