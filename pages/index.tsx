@@ -1,5 +1,6 @@
 import axios from "axios";
 import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, useEffect, useRef, useState } from "react";
+import * as crypto from "crypto";
 
 const axiosInstance = axios.create({
   baseURL: 'https://api3.binance.com/',
@@ -23,11 +24,86 @@ export default function Home() {
   const [priceUp, setPriceUp] = useState<boolean>(false)
   const [start, setStart] = useState<boolean>(false)
 
+  const buy = (coin: string, price: string) => {
+    axios.post('https://api.binance.com/api/v3/order', {
+      symbol: `${coin}BUSD`,
+      side: 'BUY',
+      type: 'MARKET',
+      quantity: 100,
+      price: price,
+      date: new Date()
+    }, {
+      headers: {
+        'X-MBX-APIKEY': "hgc"
+      }
+    }).then(function (response) {
+      console.log(response.data);
+    }).catch(function (error) {
+      console.log(error);
+    })
+  }
+
+  const getBalance = () => {
+    // axios.post('https://api.binance.com/api/v3/binancepay/openapi/balance', {"wallet": "SPOT_WALLET","currency": "BUSD"}, { 
+    //   headers: { 
+    //   'X-MBX-APIKEY': "6sVc6w01C6Z2SwSnrJrEXJmZmKExlLjCnwRnQ8KHSw02I5WLGqstjP2f4V64oPmm" 
+    // } })
+    //   .then(response=>console.log(response.data))
+    //   .catch(error=> console.log(error))const crypto = require('crypto');
+
+    // var ourRequest = new XMLHttpRequest();
+    // ourRequest.open('GET', url, true);
+    // ourRequest.setRequestHeader('X-MBX-APIKEY', keys['APIkey']);
+
+    // var arrayCleaned = [];
+    // ourRequest.onload = function () {
+    //   // Convert data string to an object
+    //   var data = JSON.parse(ourRequest.responseText); // string -->to Object
+
+    //   arrayCleaned = data.balances.map(ele => {
+    //     return {
+    //       "asset": ele.asset,
+    //       "free": ele.free
+    //     }
+    //   })
+    //   console.log(arrayCleaned);
+    // };
+
+    // ourRequest.send();
+
+
+    var burl = "https://api.binance.com";
+    var endPoint = "/api/v3/account";
+    var dataQueryString = "timestamp=" + Date.now();
+    var keys = {
+      "APIkey": '6sVc6w01C6Z2SwSnrJrEXJmZmKExlLjCnwRnQ8KHSw02I5WLGqstjP2f4V64oPmm',
+      "SECRETkey": 'm1K7YusHefwnPveyIMPuZGCOPYPUUKitnfeIiZa3tU41oR6evMWIbgQWXftW2qpW'
+    }
+    var signature = crypto.createHmac('sha256', keys['SECRETkey']).update(dataQueryString).digest('hex');
+    var url = burl + endPoint + '?' + dataQueryString + '&signature=' + signature;
+    var ourRequest = new XMLHttpRequest();
+    ourRequest.open('GET', url, true);
+    ourRequest.setRequestHeader('X-MBX-APIKEY', keys['APIkey']);
+    var arrayCleaned = [];
+    ourRequest.onload = function () {
+      // Convert data string to an object
+      var data = JSON.parse(ourRequest.responseText); // string -->to Object
+
+      arrayCleaned = data.balances.map((ele: { asset: any; free: any; }) => {
+        return {
+          "asset": ele.asset,
+          "free": ele.free
+        }
+      })
+      console.log(arrayCleaned);
+    };
+
+    ourRequest.send()
+  }
 
   useEffect(() => {
 
     setInterval(() => {
-
       getCoins().then(response => {
         let arr = response.data.filter((item: { symbol: string }) => altCoins.includes(item.symbol.toLocaleLowerCase()))
           .sort((a: { symbol: string; }, b: { symbol: string; }) => a.symbol.localeCompare(b.symbol))
@@ -43,18 +119,23 @@ export default function Home() {
     <section>
       <h1>Отображено монет {coins[1] && coins[1].length}</h1>
       <audio controls ref={sourc}><source src="/bell_ring.mp3" type="audio/mp3" /></audio>
-      <button onClick={() =>play()}>click</button>
+      <button onClick={() => play()}>click</button>
+      <button onClick={() => getBalance()}>getBalance</button>
       <main>
         {coins[1] && coins[1].map((item: { symbol: string; price: any; }, index: number) =>
-          <>
-            <div key={index} className={(item.price - coins[0][index].price) / item.price * 100 > 3 ? "priceUP" : ""}>
-              <h3>{item.symbol.replace("USDT", "")}</h3>
-              <p >
-                {Number(item.price) >= 1 ? Number(item.price) <= 10 ? Number(item.price).toFixed(1) : Number(item.price).toFixed(0) : Number(item.price).toFixed(6)}
-              </p>
-            </div>
-            {(item.price - coins[0][index].price) / item.price * 100 > 3 && play()}
-          </>
+          <div key={index}>
+            <>
+              {/* {(item.price - coins[0][index].price) / item.price * 100 > 3 && buy(item.symbol.replace("USDT", ""), item.price)} */}
+              {(item.price - coins[0][index].price) / item.price * 100 > 3 && getBalance()}
+              <div key={index} className={(item.price - coins[0][index].price) / item.price * 100 > 3 ? "priceUP" : ""}>
+                <h3>{item.symbol.replace("USDT", "")}</h3>
+                <p >
+                  {Number(item.price) >= 1 ? Number(item.price) <= 10 ? Number(item.price).toFixed(1) : Number(item.price).toFixed(0) : Number(item.price).toFixed(6)}
+                </p>
+              </div>
+              {(item.price - coins[0][index].price) / item.price * 100 > 3 && play()}
+            </>
+          </div>
         )}
       </main>
     </section>
