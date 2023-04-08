@@ -32,24 +32,35 @@ section {
   padding: 20px;
   div {
     min-width: 100px;
-    p,h3{
+    p,
+    h3 {
       text-align: center;
     }
     border: 2px solid gray;
   }
-  
-  h1{
+
+  h1 {
     text-align: center;
   }
-  main{
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
+  h2 {
+    text-align: right;
+    color: gray;
+    span {
+      color: green;
+    }
+
   }
+
 }
-.priceUP{
+.main {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  border: none;
+}
+.priceUP {
   border-color: green;
   color: goldenrod;
 }
